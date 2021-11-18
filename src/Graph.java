@@ -39,6 +39,9 @@ public class Graph {
     // hashmap of vertices with string as name of vertex and value as vertex object
     Map<String, Vertex> vertexMap = new HashMap<String, Vertex>();
 
+    // list of edges that are down
+    String[] downEdges = {};
+
     // takes vertex and adds it to the vertex map if it isn't already present
     private Vertex getVertex(String vertexName) {
         Vertex x = vertexMap.get(vertexName);
@@ -89,13 +92,13 @@ public class Graph {
         for (Vertex v : vertexMap.values()) {
             System.out.print(v.name);
             System.out.print('\n');
-            System.out.print('\n');
 
             for (Vertex w : v.adj.values()) {
                 float distance = edgeMap.get(v.name + w.name);
                 System.out.println("--> " + w.name + " " + String.valueOf(distance));
                 System.out.print('\n');
             }
+
             System.out.print('\n');
             System.out.print('\n');
         }
@@ -133,6 +136,26 @@ public class Graph {
             v.adj.remove(tail);
         } else
             System.out.println("Edge doesn't exist");
+    }
+
+    public boolean isDownEdge(String head, String tail) {
+        for (int i = 0; i < downEdges.length; i++) {
+            if (downEdges[i] == head + tail)
+                return true;
+        }
+        return false;
+    }
+
+    public void edgeDown(String tail, String head) {
+        if (!isDownEdge(head, tail)) {
+            if (isEdge(head, tail)) {
+                int y = downEdges.length;
+                if (y == 0)
+                    downEdges[0] = head + tail;
+                else
+                    downEdges[y - 1] = head + tail;
+            }
+        }
     }
 
     // void processRequest(Scanner in, Graph g) {
