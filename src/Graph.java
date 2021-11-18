@@ -13,13 +13,13 @@ import java.util.Scanner;
 
 class Vertex {
     public String name; // Vertex name
-    public List<Vertex> adj; // Adjacent vertices
+    public Map<String, Vertex> adj; // Adjacent vertices
     public Vertex prev; // Previous vertex on shortest path
     public int dist; // Distance of path
 
     public Vertex(String nm) {
         name = nm; // constructor initialize name
-        adj = new LinkedList<Vertex>(); // create blank adj list
+        adj = new HashMap<String, Vertex>(); // create blank adj list
         reset(); // call reset below
     }
 
@@ -69,8 +69,8 @@ public class Graph {
     public void addConnection(String sourceName, String destName, String weight) {
         Vertex v = getVertex(sourceName); // copies vertex obj with associated from hashmap into v
         Vertex w = getVertex(destName); // same as above for w
-        v.adj.add(w); // adds w to adj list of v
-        w.adj.add(v); // adds v to adj list of w
+        v.adj.put(w.name, w); // adds w to adj list of v
+        w.adj.put(v.name, v); // adds v to adj list of w
         insertEdge(v.name, w.name, weight); // calls insertedge
     }
 
@@ -91,8 +91,7 @@ public class Graph {
             System.out.print('\n');
             System.out.print('\n');
 
-            for (int i = 0; i < v.adj.size(); i++) {
-                Vertex w = v.adj.get(i);
+            for (Vertex w : v.adj.values()) {
                 float distance = edgeMap.get(v.name + w.name);
                 System.out.println("--> " + w.name + " " + String.valueOf(distance));
                 System.out.print('\n');
@@ -117,7 +116,7 @@ public class Graph {
             }
             if (!isEdge(head, tail)) {
                 edgeMap.put(head + tail, weight);
-                v.adj.add(w);
+                v.adj.put(w.name, w);
                 System.out.println(edgeMap.get(head + tail));
 
             }
@@ -191,10 +190,6 @@ public class Graph {
         System.out.println("enter weight");
         String weight = in.nextLine();
         g.addEdge(tail, head, Float.parseFloat(weight));
-        System.out.println("Enter edge to remove");
-        System.out.println("Enter 1st vertex");
-
-        String head1 = in.nextLine();
 
         in.close();
     }
