@@ -129,6 +129,8 @@ public class Graph {
     public void deleteEdge(String tail, String head) {
         if (isEdge(head, tail)) {
             edgeMap.remove(head + tail);
+            Vertex v = getVertex(head);
+            v.adj.remove(tail);
         } else
             System.out.println("Edge doesn't exist");
     }
