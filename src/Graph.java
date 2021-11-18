@@ -95,7 +95,9 @@ public class Graph {
 
             for (Vertex w : v.adj.values()) {
                 float distance = edgeMap.get(v.name + w.name);
-                System.out.println("--> " + w.name + " " + String.valueOf(distance));
+                System.out.print("--> " + w.name + " " + String.valueOf(distance));
+                if (isDownEdge(v.name, w.name))
+                    System.out.println("Down");
                 System.out.print('\n');
             }
 
