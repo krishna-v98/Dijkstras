@@ -237,7 +237,7 @@ public class Graph {
         // creates empty graph
         Graph g = new Graph();
         try {
-            FileReader fin = new FileReader("input.txt");
+            FileReader fin = new FileReader("Network.txt");
             Scanner graphFile = new Scanner(fin);
 
             // Read the edges and insert
