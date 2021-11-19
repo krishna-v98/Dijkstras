@@ -1,7 +1,7 @@
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
@@ -40,8 +40,8 @@ public class Graph {
     Map<String, Vertex> vertexMap = new HashMap<String, Vertex>();
 
     // list of edges that are down
-    String[] downEdges = {};
-    String[] downVertices = {};
+    List<String> downEdges = new ArrayList<String>();
+    List<String> downVertices = new ArrayList<String>();
 
     // takes vertex and adds it to the vertex map if it isn't already present
     private Vertex getVertex(String vertexName) {
@@ -94,16 +94,20 @@ public class Graph {
     // prints entire graph
     public void printGraph() {
         for (Vertex v : vertexMap.values()) { // iterate through hashmap
-            System.out.print(v.name); // name
+
+            System.out.print(v.name);
             if (isDownVertex(v.name))
-                System.out.println("  DOWN");
+                System.out.println("  Down");
+
             System.out.print('\n');
 
             for (Vertex w : v.adj.values()) { // iterate current vertex's adj list
                 float distance = edgeMap.get(v.name + w.name); // get value from edgemap for distance
+
                 System.out.print("--> " + w.name + " " + String.valueOf(distance)); // print distance
                 if (isDownEdge(v.name, w.name)) // check if edge is down
-                    System.out.println("Down");
+                    System.out.print("  Down");
+
                 System.out.print('\n');
             }
 
@@ -134,7 +138,6 @@ public class Graph {
                 System.out.println(edgeMap.get(head + tail));
 
             }
-            printGraph(); // call this to check
         } else
             System.out.println("1 or more Vertices not found");
 
@@ -152,31 +155,27 @@ public class Graph {
 
     // check if edge is down
     public boolean isDownEdge(String head, String tail) {
-        for (int i = 0; i < downEdges.length; i++) { // iterate through downedge string array
-            if (downEdges[i] == head + tail) // check with each element
-                return true; // return true of match -- end of function
-        }
-        return false;
+        // iterate through downedge string array
+        if (downEdges.contains(head + tail)) // check with each element
+            return true; // return true of match -- end of function
+        else
+            return false;
     }
 
     // check if vertex is down
     public boolean isDownVertex(String vertex) {
-        for (int i = 0; i < downVertices.length; i++) { // iterate through downvertex string array
-            if (downVertices[i] == vertex) // check with each element
-                return true; // return true of match -- end of function
-        }
-        return false;
+
+        if (downVertices.contains(vertex)) // check with each element
+            return true; // return true of match -- end of function
+        else
+            return false;
     }
 
     // mark edge as down
     public void edgeDown(String tail, String head) {
         if (isEdge(head, tail)) { // check if it is an edge
             if (!isDownEdge(head, tail)) { // check if it's not already down
-                int y = downEdges.length; // int as length of downedge array
-                if (y == 0)
-                    downEdges[0] = head + tail; // if y is 0 add first element
-                else
-                    downEdges[y - 1] = head + tail; // else add to the end of the array
+                downEdges.add(head + tail);// else add to the end of the array
             } else
                 System.out.println("edge already down");
         } else
@@ -187,12 +186,7 @@ public class Graph {
     public void edgeUp(String tail, String head) {
         if (isEdge(head, tail)) { // check if edge
             if (isDownEdge(head, tail)) {
-                for (int i = 0; i < downEdges.length; i++) { // iterate though downedges
-                    if (downEdges[i] == head + tail) {
-                        downEdges[i] = "nil"; // marks down edge as nil
-                        break;
-                    }
-                }
+                downEdges.remove(head + tail);
             } else
                 System.out.println("Edge already active");
         } else
@@ -203,12 +197,7 @@ public class Graph {
     public void vertexDown(String vertex) {
         if (isVertex(vertex)) {
             if (!isDownVertex(vertex)) {
-                int y = downVertices.length;
-                if (y == 0)
-                    downVertices[0] = vertex;
-                else {
-                    downVertices[y - 1] = vertex; // adding it to the down vertices array
-                }
+                downVertices.add(vertex);
             } else
                 System.out.println("vertex already down");
 
@@ -219,12 +208,7 @@ public class Graph {
     public void vertexUp(String vertex) {
         if (isVertex(vertex)) {
             if (isDownVertex(vertex)) {
-                for (int i = 0; i < downVertices.length; i++) { // iterate though downedges
-                    if (downEdges[i] == vertex) {
-                        downEdges[i] = "nil"; // marks down edge as nil
-                        break;
-                    }
-                }
+                downVertices.remove(vertex);
             }
             System.out.println("vertex already active");
         } else
@@ -279,15 +263,22 @@ public class Graph {
             System.err.println(e);
         }
         g.printGraph();
-        Scanner in = new Scanner(System.in);
-        System.out.println("enter 1st Vertex");
-        String head = in.nextLine();
-        System.out.println("enter 2nd Vertex");
-        String tail = in.nextLine();
-        System.out.println("enter weight");
-        String weight = in.nextLine();
-        g.addEdge(tail, head, Float.parseFloat(weight));
-
-        in.close();
+        System.out.println("---------------------------------------------------------");
+        g.addEdge("Duke", "Health", 10);
+        System.out.println("\n");
+        System.out.println("---------------------------------------------------------");
+        g.printGraph();
+        System.out.println("---------------------------------------------------------");
+        g.addEdge("Woodward", "Health", 5);
+        System.out.println("---------------------------------------------------------");
+        g.printGraph();
+        System.out.println("--------------------------------------------------------");
+        g.edgeDown("Education", "Health");
+        g.edgeDown("Belk", "Health");
+        g.vertexDown("Health");
+        g.vertexDown("Duke");
+        System.out.println("marked edges & vertices down");
+        System.out.println("---------------------------------------");
+        g.printGraph();
     }
 }
