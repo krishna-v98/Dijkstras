@@ -95,6 +95,8 @@ public class Graph {
     public void printGraph() {
         for (Vertex v : vertexMap.values()) { // iterate through hashmap
             System.out.print(v.name); // name
+            if (isDownVertex(v.name))
+                System.out.println("  DOWN");
             System.out.print('\n');
 
             for (Vertex w : v.adj.values()) { // iterate current vertex's adj list
@@ -157,6 +159,15 @@ public class Graph {
         return false;
     }
 
+    // check if vertex is down
+    public boolean isDownVertex(String vertex) {
+        for (int i = 0; i < downVertices.length; i++) { // iterate through downvertex string array
+            if (downVertices[i] == vertex) // check with each element
+                return true; // return true of match -- end of function
+        }
+        return false;
+    }
+
     // mark edge as down
     public void edgeDown(String tail, String head) {
         if (isEdge(head, tail)) { // check if it is an edge
@@ -188,6 +199,37 @@ public class Graph {
             System.out.println("not an edge");
     }
 
+    // mark vertex as down
+    public void vertexDown(String vertex) {
+        if (isVertex(vertex)) {
+            if (!isDownVertex(vertex)) {
+                int y = downVertices.length;
+                if (y == 0)
+                    downVertices[0] = vertex;
+                else {
+                    downVertices[y - 1] = vertex; // adding it to the down vertices array
+                }
+            } else
+                System.out.println("vertex already down");
+
+        } else
+            System.out.println("vertex not present");
+    }
+
+    public void vertexUp(String vertex) {
+        if (isVertex(vertex)) {
+            if (isDownVertex(vertex)) {
+                for (int i = 0; i < downVertices.length; i++) { // iterate though downedges
+                    if (downEdges[i] == vertex) {
+                        downEdges[i] = "nil"; // marks down edge as nil
+                        break;
+                    }
+                }
+            }
+            System.out.println("vertex already active");
+        } else
+            System.out.println("Not a vertex");
+    }
     // void processRequest(Scanner in, Graph g) {
     // System.out.println("Enter operation");
     // System.out.println("1.For add edge --> type addEdge");
