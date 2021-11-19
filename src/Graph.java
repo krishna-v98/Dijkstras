@@ -41,6 +41,7 @@ public class Graph {
 
     // list of edges that are down
     String[] downEdges = {};
+    String[] downVertices = {};
 
     // takes vertex and adds it to the vertex map if it isn't already present
     private Vertex getVertex(String vertexName) {
@@ -52,6 +53,7 @@ public class Graph {
         return x;
     }
 
+    // check if given vertices have an edge
     boolean isEdge(String head, String tail) {
         if (edgeMap.containsKey(head + tail)) {
             return true;
@@ -59,6 +61,7 @@ public class Graph {
             return false;
     }
 
+    // check if given name is a vertex
     boolean isVertex(String v) {
         Vertex x = vertexMap.get(v);
         if (x == null)
@@ -88,15 +91,16 @@ public class Graph {
         /* same as above but reverse --> replicating the bidirectional theme */
     }
 
+    // prints entire graph
     public void printGraph() {
-        for (Vertex v : vertexMap.values()) {
-            System.out.print(v.name);
+        for (Vertex v : vertexMap.values()) { // iterate through hashmap
+            System.out.print(v.name); // name
             System.out.print('\n');
 
-            for (Vertex w : v.adj.values()) {
-                float distance = edgeMap.get(v.name + w.name);
-                System.out.print("--> " + w.name + " " + String.valueOf(distance));
-                if (isDownEdge(v.name, w.name))
+            for (Vertex w : v.adj.values()) { // iterate current vertex's adj list
+                float distance = edgeMap.get(v.name + w.name); // get value from edgemap for distance
+                System.out.print("--> " + w.name + " " + String.valueOf(distance)); // print distance
+                if (isDownEdge(v.name, w.name)) // check if edge is down
                     System.out.println("Down");
                 System.out.print('\n');
             }
@@ -106,58 +110,82 @@ public class Graph {
         }
     }
 
+    // add an edge to graph
     public void addEdge(String tail, String head, float weight) {
-        if (isVertex(head) && isVertex(tail)) {
+        if (isVertex(head) && isVertex(tail)) { // check if given names are vertices in graph and proceed else print not
+                                                // found
 
             Vertex v = getVertex(head);
             Vertex w = getVertex(tail);
 
-            if (isEdge(head, tail)) {
+            if (isEdge(head, tail)) { // check if it's an edge
 
-                if (edgeMap.get(v.name + w.name) != weight) {
-                    edgeMap.put(v.name + w.name, weight);
+                if (edgeMap.get(v.name + w.name) != weight) { // if already edge exists and weigth doesn't match with
+                                                              // given input, update it
+                    edgeMap.put(v.name + w.name, weight); // update
                     edgeMap.put(w.name + v.name, weight);
                 }
             }
-            if (!isEdge(head, tail)) {
+            if (!isEdge(head, tail)) { // if it's not an edge, add it to edgemap only in one direction
                 edgeMap.put(head + tail, weight);
-                v.adj.put(w.name, w);
+                v.adj.put(w.name, w); // put tail in head's adj list
                 System.out.println(edgeMap.get(head + tail));
 
             }
-            printGraph();
+            printGraph(); // call this to check
         } else
             System.out.println("1 or more Vertices not found");
 
     }
 
+    // delete edge
     public void deleteEdge(String tail, String head) {
-        if (isEdge(head, tail)) {
-            edgeMap.remove(head + tail);
-            Vertex v = getVertex(head);
-            v.adj.remove(tail);
+        if (isEdge(head, tail)) { // check if it's edge or print edge doesn't exist
+            edgeMap.remove(head + tail); // remove entry from edgemap
+            Vertex v = getVertex(head); // obtain head vertex
+            v.adj.remove(tail); // remove tail from head's adj list
         } else
             System.out.println("Edge doesn't exist");
     }
 
+    // check if edge is down
     public boolean isDownEdge(String head, String tail) {
-        for (int i = 0; i < downEdges.length; i++) {
-            if (downEdges[i] == head + tail)
-                return true;
+        for (int i = 0; i < downEdges.length; i++) { // iterate through downedge string array
+            if (downEdges[i] == head + tail) // check with each element
+                return true; // return true of match -- end of function
         }
         return false;
     }
 
+    // mark edge as down
     public void edgeDown(String tail, String head) {
-        if (!isDownEdge(head, tail)) {
-            if (isEdge(head, tail)) {
-                int y = downEdges.length;
+        if (isEdge(head, tail)) { // check if it is an edge
+            if (!isDownEdge(head, tail)) { // check if it's not already down
+                int y = downEdges.length; // int as length of downedge array
                 if (y == 0)
-                    downEdges[0] = head + tail;
+                    downEdges[0] = head + tail; // if y is 0 add first element
                 else
-                    downEdges[y - 1] = head + tail;
-            }
-        }
+                    downEdges[y - 1] = head + tail; // else add to the end of the array
+            } else
+                System.out.println("edge already down");
+        } else
+            System.out.println("Not an Edge");
+    }
+
+    // mark edge as not down
+    public void edgeUp(String tail, String head) {
+        if (isEdge(head, tail)) { // check if edge
+            if (isDownEdge(head, tail)) {
+                for (int i = 0; i < downEdges.length; i++) { // iterate though downedges
+                    if (downEdges[i] == head + tail) {
+                        downEdges[i] = "nil"; // marks down edge as nil
+                        break;
+                    }
+                }
+            } else
+                System.out.println("Edge already active");
+        } else
+            System.out.println("not an edge");
     }
 
     // void processRequest(Scanner in, Graph g) {
