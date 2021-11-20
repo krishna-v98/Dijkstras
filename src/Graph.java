@@ -247,6 +247,8 @@ public class Graph {
                 });
 
                 for (Vertex v : vertexMap.values()) {
+                    if (isDownVertex(v.name))
+                        continue;
                     distances.add(v);
                 }
 
@@ -255,6 +257,8 @@ public class Graph {
 
                     for (Vertex v : u.adj.values()) {
                         if (v.dist > u.dist + edgeMap.get(u.name + v.name)) {
+                            if (isDownEdge(u.name, v.name))
+                                continue;
                             v.dist = u.dist + edgeMap.get(u.name + v.name);
                             v.prev = u;
                         }
@@ -262,6 +266,7 @@ public class Graph {
                 }
 
                 printPath(endVertex);
+                System.out.print(" ");
                 System.out.print(String.valueOf(sumWeight(endVertex)));
 
             }
@@ -281,9 +286,14 @@ public class Graph {
     void printPath(Vertex dest) {
         if (dest.prev != null) {
             printPath(dest.prev);
-            System.out.print(" ");
         }
-        System.out.println(dest.name);
+        System.out.print(" " + dest.name);
+    }
+
+    public void reachable() {
+        for (Vertex v : vertexMap.values()) {
+
+        }
     }
 
     // void processRequest(Scanner in, Graph g) {
@@ -352,6 +362,8 @@ public class Graph {
         // System.out.println("marked edges & vertices down");
         // System.out.println("---------------------------------------");
         // g.printGraph();
-        g.dijkstra("Belk", "Education");
+        g.vertexDown("Woodward");
+        g.edgeDown("Duke", "Belk");
+        g.dijkstra("Belk", "Duke");
     }
 }
