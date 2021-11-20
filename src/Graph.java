@@ -9,13 +9,14 @@ import java.util.Map;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 
 class Vertex {
     public String name; // Vertex name
     public Map<String, Vertex> adj; // Adjacent vertices
     public Vertex prev; // Previous vertex on shortest path
-    public int dist; // Distance of path
+    public float dist; // Distance of path
 
     public Vertex(String nm) {
         name = nm; // constructor initialize name
@@ -26,6 +27,10 @@ class Vertex {
     public void reset() { // sets dist to largest int value
         dist = Graph.INFINITY;
         prev = null; // sets previous on the path to null
+    }
+
+    public float getDist() {
+        return dist;
     }
 
 }
@@ -42,6 +47,11 @@ public class Graph {
     // list of edges that are down
     List<String> downEdges = new ArrayList<String>();
     List<String> downVertices = new ArrayList<String>();
+
+    private void clearAll() {
+        for (Vertex v : vertexMap.values())
+            v.reset();
+    }
 
     // takes vertex and adds it to the vertex map if it isn't already present
     private Vertex getVertex(String vertexName) {
@@ -214,6 +224,68 @@ public class Graph {
         } else
             System.out.println("Not a vertex");
     }
+
+    public void dijkstra(String start, String end) {
+
+        if (isVertex(start) && isVertex(end)) {
+            if (isDownVertex(start) || isDownVertex(end)) {
+                System.out.println("one of the vertices unavailable");
+            } else {
+                // DIJKSTRA'S BEGIN
+                clearAll(); // all distances infinite and all prev nill
+                Vertex startVertex = getVertex(start);
+                Vertex endVertex = getVertex(end);
+
+                startVertex.dist = 0;
+
+                PriorityQueue<Vertex> distances = new PriorityQueue<>((v1, v2) -> {
+                    if (v1.getDist() > v2.getDist())
+                        return 1;
+                    else if (v1.getDist() < v2.getDist())
+                        return -1;
+                    return 0;
+                });
+
+                for (Vertex v : vertexMap.values()) {
+                    distances.add(v);
+                }
+
+                while (!distances.isEmpty()) {
+                    Vertex u = distances.poll();
+
+                    for (Vertex v : u.adj.values()) {
+                        if (v.dist > u.dist + edgeMap.get(u.name + v.name)) {
+                            v.dist = u.dist + edgeMap.get(u.name + v.name);
+                            v.prev = u;
+                        }
+                    }
+                }
+
+                printPath(endVertex);
+                System.out.print(String.valueOf(sumWeight(endVertex)));
+
+            }
+        } else
+            System.out.println("vertices not found");
+    }
+
+    float sumWeight(Vertex dest) {
+        float sum = 0;
+        while (dest.prev != null) {
+            sum += edgeMap.get(dest.prev.name + dest.name);
+            dest = dest.prev;
+        }
+        return sum;
+    }
+
+    void printPath(Vertex dest) {
+        if (dest.prev != null) {
+            printPath(dest.prev);
+            System.out.print(" ");
+        }
+        System.out.println(dest.name);
+    }
+
     // void processRequest(Scanner in, Graph g) {
     // System.out.println("Enter operation");
     // System.out.println("1.For add edge --> type addEdge");
@@ -263,22 +335,23 @@ public class Graph {
             System.err.println(e);
         }
         g.printGraph();
-        System.out.println("---------------------------------------------------------");
-        g.addEdge("Duke", "Health", 10);
-        System.out.println("\n");
-        System.out.println("---------------------------------------------------------");
-        g.printGraph();
-        System.out.println("---------------------------------------------------------");
-        g.addEdge("Woodward", "Health", 5);
-        System.out.println("---------------------------------------------------------");
-        g.printGraph();
-        System.out.println("--------------------------------------------------------");
-        g.edgeDown("Education", "Health");
-        g.edgeDown("Belk", "Health");
-        g.vertexDown("Health");
-        g.vertexDown("Duke");
-        System.out.println("marked edges & vertices down");
-        System.out.println("---------------------------------------");
-        g.printGraph();
+        // System.out.println("---------------------------------------------------------");
+        // g.addEdge("Duke", "Health", 10);
+        // System.out.println("\n");
+        // System.out.println("---------------------------------------------------------");
+        // g.printGraph();
+        // System.out.println("---------------------------------------------------------");
+        // g.addEdge("Woodward", "Health", 5);
+        // System.out.println("---------------------------------------------------------");
+        // g.printGraph();
+        // System.out.println("--------------------------------------------------------");
+        // g.edgeDown("Education", "Health");
+        // g.edgeDown("Belk", "Health");
+        // g.vertexDown("Health");
+        // g.vertexDown("Duke");
+        // System.out.println("marked edges & vertices down");
+        // System.out.println("---------------------------------------");
+        // g.printGraph();
+        g.dijkstra("Belk", "Education");
     }
 }
