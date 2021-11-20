@@ -4,9 +4,7 @@ import java.util.StringTokenizer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Queue;
 import java.util.Map;
-import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
@@ -47,6 +45,8 @@ public class Graph {
     // list of edges that are down
     List<String> downEdges = new ArrayList<String>();
     List<String> downVertices = new ArrayList<String>();
+
+    // List<String> rechableVerticesforaVertex = new ArrayList<String>();
 
     private void clearAll() {
         for (Vertex v : vertexMap.values())
@@ -290,11 +290,26 @@ public class Graph {
         System.out.print(" " + dest.name);
     }
 
-    public void reachable() {
-        for (Vertex v : vertexMap.values()) {
+    // public void reachable() {
+    // for (Vertex v : vertexMap.values()) {
+    // rechableVerticesforaVertex.clear();
+    // System.out.println(v.name);
+    // rechableFromVertex(v);
+    // }
+    // }
 
-        }
-    }
+    // private void rechableFromVertex(Vertex v) {
+    // for (Vertex w : v.adj.values()) {
+    // if (isDownVertex(w.name) || isDownEdge(v.name, w.name) ||
+    // rechableVerticesforaVertex.contains(w.name))
+    // continue;
+    // else {
+    // rechableFromVertex(w);
+    // rechableVerticesforaVertex.add(w.name);
+    // System.out.println(w.name);
+    // }
+    // }
+    // }
 
     // void processRequest(Scanner in, Graph g) {
     // System.out.println("Enter operation");
@@ -344,7 +359,6 @@ public class Graph {
         } catch (IOException e) {
             System.err.println(e);
         }
-        g.printGraph();
         // System.out.println("---------------------------------------------------------");
         // g.addEdge("Duke", "Health", 10);
         // System.out.println("\n");
@@ -364,6 +378,8 @@ public class Graph {
         // g.printGraph();
         g.vertexDown("Woodward");
         g.edgeDown("Duke", "Belk");
+        g.printGraph();
         g.dijkstra("Belk", "Duke");
+        // g.reachable();
     }
 }
