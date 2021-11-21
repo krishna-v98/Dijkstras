@@ -1,6 +1,7 @@
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -103,27 +104,36 @@ public class Graph {
 
     // prints entire graph
     public void printGraph() {
-        for (Vertex v : vertexMap.values()) { // iterate through hashmap
 
-            System.out.print(v.name);
-            if (isDownVertex(v.name))
-                System.out.println("  Down");
+        TreeSet<String> vertices = new TreeSet<String>();
 
-            System.out.print('\n');
+        for (Vertex v : vertexMap.values()) {
+            vertices.add(v.name);
+        }
 
-            for (Vertex w : v.adj.values()) { // iterate current vertex's adj list
-                float distance = edgeMap.get(v.name + w.name); // get value from edgemap for distance
+        for (String v : vertices) {
+            System.out.println(v);
+            if (isDownVertex(v))
+                System.out.println(" Down");
 
-                System.out.print("--> " + w.name + " " + String.valueOf(distance)); // print distance
-                if (isDownEdge(v.name, w.name)) // check if edge is down
-                    System.out.print("  Down");
+            TreeSet<String> adjList = new TreeSet<String>();
 
-                System.out.print('\n');
+            for (Vertex w : getVertex(v).adj.values()) {
+                adjList.add(w.name);
             }
 
-            System.out.print('\n');
-            System.out.print('\n');
+            for (String w : adjList) {
+                float distance = edgeMap.get(v + w);
+
+                System.out.print("--> " + w + " " + String.valueOf(distance));
+                if (isDownEdge(v, w))
+                    System.out.print(" Down");
+                System.out.println();
+            }
+            System.out.println();
+            System.out.println();
         }
+
     }
 
     // add an edge to graph
@@ -376,10 +386,10 @@ public class Graph {
         // System.out.println("marked edges & vertices down");
         // System.out.println("---------------------------------------");
         // g.printGraph();
-        g.vertexDown("Woodward");
-        g.edgeDown("Duke", "Belk");
+        // g.vertexDown("Woodward");
+        // g.edgeDown("Duke", "Belk");
         g.printGraph();
-        g.dijkstra("Belk", "Duke");
+        // g.dijkstra("Belk", "Duke");
         // g.reachable();
     }
 }
