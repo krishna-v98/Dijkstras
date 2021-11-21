@@ -3,12 +3,12 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.NoSuchElementException;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Scanner;
 
 class Vertex {
@@ -16,6 +16,7 @@ class Vertex {
     public Map<String, Vertex> adj; // Adjacent vertices
     public Vertex prev; // Previous vertex on shortest path
     public float dist; // Distance of path
+    public boolean visited = false;
 
     public Vertex(String nm) {
         name = nm; // constructor initialize name
@@ -112,9 +113,13 @@ public class Graph {
         }
 
         for (String v : vertices) {
-            System.out.println(v);
+            System.out.print(v);
+
             if (isDownVertex(v))
-                System.out.println(" Down");
+                System.out.print(" Down");
+
+            System.out.println();
+            System.out.println();
 
             TreeSet<String> adjList = new TreeSet<String>();
 
@@ -138,28 +143,22 @@ public class Graph {
 
     // add an edge to graph
     public void addEdge(String tail, String head, float weight) {
-        if (isVertex(head) && isVertex(tail)) { // check if given names are vertices in graph and proceed else print not
-                                                // found
 
-            Vertex v = getVertex(head);
-            Vertex w = getVertex(tail);
+        Vertex v = getVertex(head);
+        Vertex w = getVertex(tail);
 
-            if (isEdge(head, tail)) { // check if it's an edge
+        if (isEdge(head, tail)) { // check if it's an edge
 
-                if (edgeMap.get(v.name + w.name) != weight) { // if already edge exists and weigth doesn't match with
-                                                              // given input, update it
-                    edgeMap.put(v.name + w.name, weight); // update
-                    edgeMap.put(w.name + v.name, weight);
-                }
+            if (edgeMap.get(v.name + w.name) != weight) { // if already edge exists and weigth doesn't match with
+                                                          // given input, update it
+                edgeMap.put(v.name + w.name, weight); // update
             }
-            if (!isEdge(head, tail)) { // if it's not an edge, add it to edgemap only in one direction
-                edgeMap.put(head + tail, weight);
-                v.adj.put(w.name, w); // put tail in head's adj list
-                System.out.println(edgeMap.get(head + tail));
+        } else { // if it's not an edge, add it to edgemap only in one direction
+            edgeMap.put(head + tail, weight);
+            v.adj.put(w.name, w); // put tail in head's adj list
+            System.out.println(edgeMap.get(head + tail));
 
-            }
-        } else
-            System.out.println("1 or more Vertices not found");
+        }
 
     }
 
@@ -300,6 +299,8 @@ public class Graph {
         System.out.print(" " + dest.name);
     }
 
+    TreeSet<String> reachables = new TreeSet<String>();
+
     // public void reachable() {
     // for (Vertex v : vertexMap.values()) {
     // rechableVerticesforaVertex.clear();
@@ -386,10 +387,10 @@ public class Graph {
         // System.out.println("marked edges & vertices down");
         // System.out.println("---------------------------------------");
         // g.printGraph();
-        // g.vertexDown("Woodward");
-        // g.edgeDown("Duke", "Belk");
+        g.vertexDown("Woodward");
+        g.edgeDown("Duke", "Belk");
         g.printGraph();
-        // g.dijkstra("Belk", "Duke");
+        g.dijkstra("Belk", "Duke");
         // g.reachable();
     }
 }
